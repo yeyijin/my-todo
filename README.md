@@ -6,3 +6,5 @@
 - wpf（prism、MaterialDesignInXAML）
 - 本地数据sqllite
 - 数据orm：sqlsugar
+
+![image](https://github.com/user-attachments/assets/05b8b94c-0a10-47be-ab4f-29336e7e9cc5)
