@@ -14,6 +14,8 @@ namespace ToDoList.Common
 
         //今日专注
         public const string ToadyFocusKey = "ToadyFocusKey";
+        //今日番茄闹钟
+        public const string ToadyTomatoKey = "ToadyTomatoKey";
         //今日成功
         public const string ToadySuccessedKey = "ToadySuccessedKey";
         //今日逾期

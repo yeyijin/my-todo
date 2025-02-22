@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 using ToDoList.Common;
 using ToDoList.IService;
 using ToDoList.Models;
@@ -127,6 +128,7 @@ namespace ToDoList.ViewModels
         /// <exception cref="NotImplementedException"></exception>
         public void InitConfiguration()
         {
+            Grid grid = new Grid();
             GoHome();
         }
     }

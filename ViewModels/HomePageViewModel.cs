@@ -13,6 +13,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using ToDoList.Common;
 using ToDoList.Models;
@@ -349,7 +350,8 @@ namespace ToDoList.ViewModels
             //对象处理，默认时间
             if (TodoInfo.Id <= 0)
             {
-                await _resposityManager.AddAsync(TodoInfo);
+              var id=  await _resposityManager.AddAsync(TodoInfo);
+                TodoInfo.Id = id;
                 //新增todo list
                 OnGoingToDoList.Add(TodoInfo);
             }
@@ -388,7 +390,7 @@ namespace ToDoList.ViewModels
         private void AddClick()
         {
             IsRightShow = true;
-            TodoInfo.Id = 0;
+            TodoInfo = new ToDoInfo();
         }
 
         /// <summary>
@@ -402,6 +404,7 @@ namespace ToDoList.ViewModels
             if (statictisInfos.Count <= 0)
             {
                 _statisticsInfos.Add(new StatisticsInfo() { BgColor = "#F08080", Key = Common.ConstInfo.ToadyFocusKey, Title = "今日专注时长", Icon = "ImageFilterCenterFocus", Val = 0, Description = "分钟", Date = DateTime.Now });
+                _statisticsInfos.Add(new StatisticsInfo() { BgColor = "#E08080", Key = Common.ConstInfo.ToadyTomatoKey, Title = "今日番茄闹钟", Icon = "ImageFilterCenterFocus", Val = 0, Description = "个", Date = DateTime.Now });
                 _statisticsInfos.Add(new StatisticsInfo() { BgColor = "#2EB7FC", Key = Common.ConstInfo.ToadyGoalKey, Title = "今日目标", Icon = "Basketball", Val = 0, Description = "", Date = DateTime.Now });
                 _statisticsInfos.Add(new StatisticsInfo() { BgColor = "#32CD32", Key = Common.ConstInfo.ToadySuccessedKey, Title = "今日成功", Icon = "CheckCircleOutline", Val = 0, Description = "", Date = DateTime.Now });
                 _statisticsInfos.Add(new StatisticsInfo() { BgColor = "#DC143C", Key = Common.ConstInfo.ToadyOverdueKey, Title = "今日逾期", Icon = "RobotVacuumAlert", Val = 0, Description = "", Date = DateTime.Now });
@@ -536,14 +539,17 @@ namespace ToDoList.ViewModels
         private void Timer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
         {
             ClockSecond--;
+            Task.Delay(TimeSpan.FromSeconds(5)).GetAwaiter().GetResult();
+
 
             ///成功设置停止
-            if (ClockSecond == 0)
+            if (ClockSecond <= 0)
             {
                 if (IsTomatoWorking)
                 {
                     //记录当前时间的番茄闹钟数
                     CurrentTodo.TomatoCount += 1;
+                   
                 }
                 //设置运行状态为停止
                 SetTimerStatus(false);
@@ -551,8 +557,16 @@ namespace ToDoList.ViewModels
                 IsTomatoWorking = !IsTomatoWorking;
                 ClockSecond = GetTomatoClockTotalSecond();
                 StatictistInfo();
-            }
+                //跨窗体线程不能直接执行，需要这种写法
+                App.Current.Dispatcher.Invoke(new Action(delegate
+                {
+                    //设置窗体最大化
+                    App.Current.MainWindow.WindowState = System.Windows.WindowState.Maximized;
+                    //设置窗口置顶
+                    App.Current.MainWindow.Topmost = true;
 
+                }));
+            }
             // 修改当前的
         }
 
@@ -617,7 +631,7 @@ namespace ToDoList.ViewModels
 
             if (CurrentTodo != null)
             {
-                if (IsTomatoWorking)
+                if (IsTomatoWorking && IsTomatoStart)
                     //设置当前有效时间++
                     CurrentTodo.CompleteMin++;
             }
@@ -638,6 +652,7 @@ namespace ToDoList.ViewModels
             //今日专注时长
             //从A中读取统计，以及当前转动的闹钟
             int totalFocus = (int)(OnGoingToDoList.Sum(u => u.CompleteMin) + SuccessToDoList.Sum(u => u.CompleteMin));
+            int totalTomato = (int)(OnGoingToDoList.Sum(u => u.TomatoCount) + SuccessToDoList.Sum(u => u.TomatoCount));
             //今日目标数
             int goalCount = OnGoingToDoList.Count + SuccessToDoList.Count;
             //今日成功数
@@ -659,6 +674,8 @@ namespace ToDoList.ViewModels
              
              */
             _statisticsInfos.FindFirst(u => u.Key == Common.ConstInfo.ToadyFocusKey).Val = totalFocus;
+            _statisticsInfos.FindFirst(u => u.Key == Common.ConstInfo.ToadyTomatoKey).Val = totalTomato;
+
             _statisticsInfos.FindFirst(u => u.Key == Common.ConstInfo.ToadyGoalKey).Val = goalCount;
             _statisticsInfos.FindFirst(u => u.Key == Common.ConstInfo.ToadySuccessedKey).Val = successCont;
             _statisticsInfos.FindFirst(u => u.Key == Common.ConstInfo.ToadyOverdueKey).Val = overdueCount;
