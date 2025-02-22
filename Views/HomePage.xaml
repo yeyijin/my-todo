@@ -10,7 +10,7 @@
              d:DesignHeight="800" d:DesignWidth="800">
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <!---左右的弹窗基本host-->
-        <materialDesign:DrawerHost IsRightDrawerOpen="{Binding IsRightShow}" Name="HostMenu">
+        <materialDesign:DrawerHost IsRightDrawerOpen="{Binding IsRightShow}" Name="Right_Add">
             <!---右边弹窗-->
             <materialDesign:DrawerHost.RightDrawerContent>
 
@@ -83,7 +83,8 @@
                                     <UniformGrid Columns="{Binding StatisticsInfoCount}" ></UniformGrid>
                                 </ItemsPanelTemplate>
                             </ItemsControl.ItemsPanel>
-                            <ItemsControl.ItemTemplate>
+
+                            <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <Border Background="{Binding BgColor}" Margin="20" CornerRadius="5">
                                         <Border.Effect>
@@ -96,7 +97,8 @@
                                         </StackPanel>
                                     </Border>
                                 </DataTemplate>
-                            </ItemsControl.ItemTemplate>
+                            </ItemsControl.ItemTemplate>
+
                         </ItemsControl>
                     </StackPanel>
 
@@ -136,7 +138,11 @@
 
                         <!---列表-->
                         <Grid Margin="10,0,10,0">
-                            <ListBox x:Name="OnGoingToDo"                           ScrollViewer.VerticalScrollBarVisibility="Hidden"                             HorizontalContentAlignment="Stretch"                        ItemsSource="{Binding OnGoingToDoList}">                                <ListBox.ItemTemplate>
+                            <ListBox x:Name="OnGoingToDo"
+                           ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                             HorizontalContentAlignment="Stretch"
+                        ItemsSource="{Binding OnGoingToDoList}">
+                                <ListBox.ItemTemplate>
                                     <DataTemplate>
                                         <DockPanel LastChildFill="False">
                                             <StackPanel Orientation="Horizontal"  DockPanel.Dock="Right" HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -169,7 +175,11 @@
                         </Grid>
 
                         <Grid  Grid.Column="1" Margin="10,0,10,0">
-                            <ListBox x:Name="CompleteToDo"                           ScrollViewer.VerticalScrollBarVisibility="Hidden"                             HorizontalContentAlignment="Stretch"                        ItemsSource="{Binding SuccessToDoList}">                                <ListBox.ItemTemplate>
+                            <ListBox x:Name="CompleteToDo"
+                           ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                             HorizontalContentAlignment="Stretch"
+                        ItemsSource="{Binding SuccessToDoList}">
+                                <ListBox.ItemTemplate>
                                     <DataTemplate>
                                         <DockPanel LastChildFill="False">
                                             <StackPanel Orientation="Horizontal"  DockPanel.Dock="Right" HorizontalAlignment="Center" VerticalAlignment="Center">
