@@ -2,13 +2,8 @@
 using Prism.Mvvm;
 using Prism.Regions;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Controls;
-using ToDoList.Common;
 using ToDoList.IService;
 using ToDoList.Models;
 
@@ -16,32 +11,18 @@ namespace ToDoList.ViewModels
 {
     public class MainWindowViewModel : BindableBase, IConfigutaionInitWindow
     {
+        #region Fields
+
+        private readonly IRegionManager _regionManager;
         private ObservableCollection<MenuInfo> _menuItemsList;
 
-        public ObservableCollection<MenuInfo> MenuItemsList
-        {
-            get { return _menuItemsList; }
-            set { SetProperty(ref _menuItemsList, value); }
-        }
+        private IRegionNavigationJournal _regionNavigationJournal;
 
         private MenuInfo _selectedItem;
 
-        public MenuInfo SelectedItem
-        {
-            get { return _selectedItem; }
-            set { SetProperty(ref _selectedItem, value); }
-        }
+        #endregion Fields
 
-
-        public DelegateCommand SelectMenuChangedCommand { get; private set; }
-        public DelegateCommand GoBackCommand { get; private set; }
-
-        public DelegateCommand GoPreCommand { get; private set; }
-
-        public DelegateCommand GoHomeCommand { get; private set; }
-
-        private IRegionNavigationJournal _regionNavigationJournal;
-        private readonly IRegionManager _regionManager;
+        #region Public Constructors
 
         public MainWindowViewModel(IRegionManager regionManager)
         {
@@ -55,13 +36,66 @@ namespace ToDoList.ViewModels
             GoHomeCommand = new DelegateCommand(GoHome);
         }
 
-        private void SelectMenuChanged()
+        #endregion Public Constructors
+
+        #region Properties
+
+        public DelegateCommand GoBackCommand { get; private set; }
+
+        public DelegateCommand GoHomeCommand { get; private set; }
+
+        public DelegateCommand GoPreCommand { get; private set; }
+
+        public ObservableCollection<MenuInfo> MenuItemsList
         {
-            //执行跳转
-            if (_selectedItem == null)
-                return;
-            //实现跳转
-            JumpNavigate(Common.ConstInfo.MainControlRegion, _selectedItem.Navigation, null);
+            get { return _menuItemsList; }
+            set { SetProperty(ref _menuItemsList, value); }
+        }
+        public MenuInfo SelectedItem
+        {
+            get { return _selectedItem; }
+            set { SetProperty(ref _selectedItem, value); }
+        }
+
+        public DelegateCommand SelectMenuChangedCommand { get; private set; }
+
+        #endregion Properties
+
+        #region Public Methods
+
+        /// <summary>
+        /// 初始化配置
+        /// </summary>
+        /// <exception cref="NotImplementedException"></exception>
+        public void InitConfiguration()
+        {
+            Grid grid = new Grid();
+            GoHome();
+        }
+
+        #endregion Public Methods
+
+        #region Private Methods
+
+        //后退
+        private void GoBack()
+        {
+            if (_regionNavigationJournal != null && _regionNavigationJournal.CanGoBack)
+                _regionNavigationJournal.GoBack();
+        }
+
+        //主页
+        private void GoHome()
+        {
+            //跳转
+            JumpNavigate(Common.ConstInfo.MainControlRegion, "HomePage");
+        }
+
+        //前
+        private void GoPre()
+        {
+            if (_regionNavigationJournal != null && _regionNavigationJournal.CanGoForward)
+                _regionNavigationJournal.GoForward();
         }
 
         private void InitMenuList()
@@ -78,7 +112,6 @@ namespace ToDoList.ViewModels
                 Title = "主页",
                 Navigation = "HomePage"
             });
-
         }
 
         /// <summary>
@@ -103,33 +136,15 @@ namespace ToDoList.ViewModels
               );
         }
 
-        //主页
-        private void GoHome()
+        private void SelectMenuChanged()
         {
-            //跳转
-            JumpNavigate(Common.ConstInfo.MainControlRegion, "HomePage");
-        }
-        //前
-        private void GoPre()
-        {
-            if (_regionNavigationJournal != null && _regionNavigationJournal.CanGoForward)
-                _regionNavigationJournal.GoForward();
-        }
-        //后退
-        private void GoBack()
-        {
-            if (_regionNavigationJournal != null && _regionNavigationJournal.CanGoBack)
-                _regionNavigationJournal.GoBack();
+            //执行跳转
+            if (_selectedItem == null)
+                return;
+            //实现跳转
+            JumpNavigate(Common.ConstInfo.MainControlRegion, _selectedItem.Navigation, null);
         }
 
-        /// <summary>
-        /// 初始化配置
-        /// </summary>
-        /// <exception cref="NotImplementedException"></exception>
-        public void InitConfiguration()
-        {
-            Grid grid = new Grid();
-            GoHome();
-        }
+        #endregion Private Methods
     }
 }

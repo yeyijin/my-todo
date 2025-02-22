@@ -30,7 +30,7 @@
                         Style="{StaticResource MaterialDesignHamburgerToggleButton}" />
                 <StackPanel>
                     <Image Source="/Images/face.jpg" Width="80" Margin="0,0,0,0">
-                        <Image.Clip >
+                        <Image.Clip>
                             <EllipseGeometry Center="40,40" RadiusX="40" RadiusY="40"></EllipseGeometry>
                         </Image.Clip>
                     </Image>
@@ -48,25 +48,24 @@
                         <ListBox.ItemTemplate>
                             <DataTemplate DataType="domain:DemoItem">
                                 <StackPanel Orientation="Horizontal">
-                                    <materialDesign:PackIcon Kind="{Binding Icon}" Margin="10"/>
+                                    <materialDesign:PackIcon Kind="{Binding Icon}" Margin="10" />
                                     <TextBlock Text="{Binding Title}" Margin="24,10,0,4"></TextBlock>
                                 </StackPanel>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
-
                     </ListBox>
                 </StackPanel>
             </DockPanel>
         </materialDesign:DrawerHost.LeftDrawerContent>
 
-        <DockPanel >
+        <DockPanel>
             <materialDesign:ColorZone Padding="16"  x:Name="TopDock"
                                   materialDesign:ElevationAssist.Elevation="Dp4"
                                   DockPanel.Dock="Top"
                                   Mode="PrimaryMid">
-                <DockPanel >
+                <DockPanel>
 
-                    <StackPanel Orientation="Horizontal" >
+                    <StackPanel Orientation="Horizontal">
                         <ToggleButton x:Name="MenuToggleButton"
                             AutomationProperties.Name="HamburgerToggleButton"
                             IsChecked="False"
@@ -120,9 +119,7 @@
             </materialDesign:PopupBox>-->
                 </DockPanel>
             </materialDesign:ColorZone>
-            <ContentControl    prism:RegionManager.RegionName="{x:Static ext:ConstInfo.MainControlRegion}"/>
+            <ContentControl    prism:RegionManager.RegionName="{x:Static ext:ConstInfo.MainControlRegion}" />
         </DockPanel>
-
-
     </materialDesign:DrawerHost>
 </Window>

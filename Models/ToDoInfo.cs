@@ -1,31 +1,30 @@
 ﻿using Prism.Mvvm;
 using SqlSugar;
 using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ToDoList.Models
 {
-
+    /// <summary>
+    /// todo任务
+    /// </summary>
     [SugarTable(nameof(ToDoInfo))]
-    public class ToDoInfo:BindableBase
+    public class ToDoInfo : BindableBase
     {
-
         [SugarColumn(IsPrimaryKey = true, IsIdentity = true)]
         public int Id { get; set; }
+
         public string Title { get; set; }
 
         public string Description { get; set; }
 
         [SugarColumn(IsIgnore = true)]
         public string StartHour { get; set; }
+
         public DateTime StartTime { get; set; }
 
         [SugarColumn(IsIgnore = true)]
         public string EndHour { get; set; }
+
         public DateTime EndTime { get; set; }
 
         /// <summary>
@@ -48,8 +47,6 @@ namespace ToDoList.Models
             get { return _completeMin; }
             set { SetProperty(ref _completeMin, value); }
         }
-
-
 
         /// <summary>
         /// 番茄时钟数量

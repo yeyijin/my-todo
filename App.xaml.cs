@@ -1,14 +1,6 @@
 ﻿using Prism.DryIoc;
 using Prism.Ioc;
 using Prism.Modularity;
-using Prism.Services.Dialogs;
-using SqlSugar;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 using ToDoList.IService;
 using ToDoList.Resposity;
@@ -30,9 +22,8 @@ namespace ToDoList
 
         protected override void OnInitialized()
         {
- 
-            var mainWC= this.MainWindow.DataContext as IConfigutaionInitWindow;
-            mainWC?.InitConfiguration();    
+            var mainWC = this.MainWindow.DataContext as IConfigutaionInitWindow;
+            mainWC?.InitConfiguration();
             base.OnInitialized();
         }
 

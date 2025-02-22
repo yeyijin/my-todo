@@ -24,202 +24,85 @@ namespace ToDoList.ViewModels
 {
     internal class HomePageViewModel : BindableBase
     {
-        private System.Timers.Timer timer = null;
+        #region Fields
 
-
-
+        private readonly IDialogService _dialogService;
         private bool _bkDataSyncRun = false;
         //后台同步任务时钟
         private System.Timers.Timer _bkDataSyncTimer = null;
 
-        private ToDoInfo _todoInfo;
-
         /// <summary>
-        /// 新增或者删除的类
+        /// 统计秒速
         /// </summary>
-        public ToDoInfo TodoInfo
-        {
-            get { return _todoInfo; }
-            set { SetProperty(ref _todoInfo, value); }
-        }
+        private int _clockSecond;
 
+        private string _clockTime;
         private ToDoInfo _currentTodo;
+        /// <summary>
+        /// dialog
+        /// </summary>
+        private bool _isDialogOpen;
+
+        //是否右边窗口show
+        private bool _isRightShow;
 
         /// <summary>
-        /// 当前番茄闹钟类
+        /// 是否运行 。有两种状态。 运行和休息
         /// </summary>
-        public ToDoInfo CurrentTodo
-        {
-            get { return _currentTodo; }
-            set { SetProperty(ref _currentTodo, value); }
-        }
+        private bool _isTomatoStart;
 
+        private bool _isTomatoWorking;
+        private DateTime _nowDate;
+        /// <summary>
+        /// 进行中列表
+        /// </summary>
+        private ObservableCollection<ToDoInfo> _onGoingToDoList;
 
-        #region MyRegion
+        private ResposityManager _resposityManager;
+        //最上面那部分
+        private int _statisticsInfoCount;
+
+        private ObservableCollection<StatisticsInfo> _statisticsInfos;
+        /// <summary>
+        /// 成功完成列表
+        /// </summary>
+        private ObservableCollection<ToDoInfo> _successToDoList;
+
         /// <summary>
         /// 今日聚焦
         /// </summary>
         private StatisticsInfo _todayFocus;
-
-        public StatisticsInfo TodayFocus
-        {
-            get { return _todayFocus; }
-            set { SetProperty(ref _todayFocus, value); }
-        }
 
         /// <summary>
         /// 今日目标数
         /// </summary>
         private StatisticsInfo _todayGoal;
 
-        public StatisticsInfo TodayGoal
-        {
-            get { return _todayGoal; }
-            set { SetProperty(ref _todayGoal, value); }
-        }
-
         /// <summary>
-        /// 今日完成
+        /// 今日进行中
         /// </summary>
-        private StatisticsInfo _todaySuccess;
-
-        public StatisticsInfo TodaySuccess
-        {
-            get { return _todaySuccess; }
-            set { SetProperty(ref _todaySuccess, value); }
-        }
+        private StatisticsInfo _todayOnGoing;
 
         /// <summary>
         /// 今日逾期
         /// </summary>
         private StatisticsInfo _todayOverdue;
 
-        public StatisticsInfo TodayOverdue
-        {
-            get { return _todayOverdue; }
-            set { SetProperty(ref _todayOverdue, value); }
-        }
-
         /// <summary>
-        /// 今日进行中
+        /// 今日完成
         /// </summary>
-        private StatisticsInfo _todayOnGoing;
+        private StatisticsInfo _todaySuccess;
 
-        public StatisticsInfo TodayOnGoing
-        {
-            get { return _todayOnGoing; }
-            set { SetProperty(ref _todayOnGoing, value); }
-        }
-        #endregion
+        private ToDoInfo _todoInfo;
+        //tomato 图标
+        private string _tomatoRunIcon;
 
+        private System.Timers.Timer timer = null;
 
-        //最上面那部分
-        private int _statisticsInfoCount;
+        #endregion Fields
 
-        public int StatisticsInfoCount
-        {
-            get { return _statisticsInfoCount; }
-            set { SetProperty(ref _statisticsInfoCount, value); }
-        }
+        #region Public Constructors
 
-
-        private ObservableCollection<StatisticsInfo> _statisticsInfos;
-        public ObservableCollection<StatisticsInfo> StatisticsInfos
-        {
-            get { return _statisticsInfos; }
-            set { SetProperty(ref _statisticsInfos, value); }
-        }
-
-
-        /// <summary>
-        /// 进行中列表
-        /// </summary>
-        private ObservableCollection<ToDoInfo> _onGoingToDoList;
-        public ObservableCollection<ToDoInfo> OnGoingToDoList
-        {
-            get { return _onGoingToDoList; }
-            set { SetProperty(ref _onGoingToDoList, value); }
-        }
-
-        /// <summary>
-        /// 成功完成列表
-        /// </summary>
-        private ObservableCollection<ToDoInfo> _successToDoList;
-        public ObservableCollection<ToDoInfo> SuccessToDoList
-        {
-            get { return _successToDoList; }
-            set { SetProperty(ref _successToDoList, value); }
-        }
-
-        /// <summary>
-        /// dialog
-        /// </summary>
-        private bool _isDialogOpen;
-        public bool IsDialogOpen
-        {
-            get { return _isDialogOpen; }
-            set { SetProperty(ref _isDialogOpen, value); }
-        }
-        private string _clockTime;
-        public string ClockTime
-        {
-            get { return _clockTime; }
-            set { SetProperty(ref _clockTime, value); }
-        }
-        /// <summary>
-        /// 统计秒速
-        /// </summary>
-        private int _clockSecond;
-        public int ClockSecond
-        {
-            get { return _clockSecond; }
-            set { SetProperty(ref _clockSecond, value); ClockTime = FomartClockTime(); }
-        }
-
-        public bool AddOrEditBtnEnable
-        {
-            get
-            {
-                return TodoInfo != null && TodoInfo.Title.IsNotNullOrEmpty()
-                    && TodoInfo.Description.IsNotNullOrEmpty()
-                    && TodoInfo.StartHour.IsNotNullOrEmpty()
-                    && TodoInfo.EndHour.IsNotNullOrEmpty()
-                    && TodoInfo.StartTime < TodoInfo.EndTime
-                    ;
-            }
-
-        }
-
-
-
-        //是否右边窗口show
-        private bool _isRightShow;
-        public bool IsRightShow
-        {
-            get { return _isRightShow; }
-            set { SetProperty(ref _isRightShow, value); }
-        }
-
-        public DelegateCommand AddClickCommond { get; private set; }
-
-        public DelegateCommand AddOrEditSubmitCommond { get; private set; }
-
-
-        public DelegateCommand<ToDoInfo> TodoStatusChangeCommand { get; private set; }
-
-
-
-
-        //
-        public DelegateCommand<ToDoInfo> TodoDeleteCommand { get; private set; }
-
-        public DelegateCommand<ToDoInfo> TodoUpdateCommand { get; private set; }
-
-        public DelegateCommand<ToDoInfo> SetCurrentTodoCommand { get; private set; }
-
-        private DateTime _nowDate;
-
-        private ResposityManager _resposityManager;
         public HomePageViewModel(IDialogService dialogService)
         {
             _nowDate = DateTime.Now.Date;
@@ -235,98 +118,206 @@ namespace ToDoList.ViewModels
             TomatoResetCommand = new DelegateCommand(TomatoReset);
             InitData().GetAwaiter().GetResult();
             _dialogService = dialogService;
-
         }
 
-        private void SetCurrentTodo(ToDoInfo info)
+        #endregion Public Constructors
+
+        #region Properties
+
+        public DelegateCommand AddClickCommond { get; private set; }
+
+        public bool AddOrEditBtnEnable
         {
-            IsDialogOpen = true;
-            //设置当前todo 为当前
-            //会清空当前闹钟，有一个确定按钮
-            DialogHelper.Open(_dialogService, Common.ConstInfo.DialogTipPage, "确定设置为当前任务吗", "确定设置为当前任务吗", u =>
+            get
             {
-                //初始化闹钟状态
-                InitClockTime();
-                //设置当前任务
-                CurrentTodo = info;
-
-            }, cancel: u => { });
-            IsDialogOpen = false;
+                return TodoInfo != null && TodoInfo.Title.IsNotNullOrEmpty()
+                    && TodoInfo.Description.IsNotNullOrEmpty()
+                    && TodoInfo.StartHour.IsNotNullOrEmpty()
+                    && TodoInfo.EndHour.IsNotNullOrEmpty()
+                    && TodoInfo.StartTime < TodoInfo.EndTime
+                    ;
+            }
         }
 
-        private void TodoUpdateSubmit(ToDoInfo info)
+        public DelegateCommand AddOrEditSubmitCommond { get; private set; }
+
+        public int ClockSecond
         {
-            if (info == null)
-                return;
-            TodoInfo = info.CopyTo<ToDoInfo>();
-            IsRightShow = true;
-            StatictistInfo();
+            get { return _clockSecond; }
+            set { SetProperty(ref _clockSecond, value); ClockTime = FomartClockTime(); }
         }
 
-        private void TodoDeleteSubmit(ToDoInfo info)
+        public string ClockTime
         {
-            IsDialogOpen = true;
-            if (info == null)
-                return;
-            var pa = new DialogParameters();
-            pa.Add("Title", "删除计划清单");
-            pa.Add("Content", $"确定删除该计划清单嘛:{info.Title}。");
-            _dialogService.Open(ConstInfo.DialogTipPage, pa, async success =>
+            get { return _clockTime; }
+            set { SetProperty(ref _clockTime, value); }
+        }
+
+        /// <summary>
+        /// 当前番茄闹钟类
+        /// </summary>
+        public ToDoInfo CurrentTodo
+        {
+            get { return _currentTodo; }
+            set { SetProperty(ref _currentTodo, value); }
+        }
+
+        public bool IsDialogOpen
+        {
+            get { return _isDialogOpen; }
+            set { SetProperty(ref _isDialogOpen, value); }
+        }
+
+        public bool IsRightShow
+        {
+            get { return _isRightShow; }
+            set { SetProperty(ref _isRightShow, value); }
+        }
+
+        /// <summary>
+        /// 是否运行 。有两种状态。 运行中，和不运行中
+        /// </summary>
+        public bool IsTomatoStart
+        {
+            get { return _isTomatoStart; }
+            set
             {
-                //执行成功操作
-                await _resposityManager.DeleteAsync(info);
-                //已出队列
-                if (info.IsComplete)
-                {
-                    var item = SuccessToDoList.FindFirst(u => u.Id == info.Id);
-                    SuccessToDoList.Remove(item);
-                }
+                SetProperty(ref _isTomatoStart, value);
+                if (value)
+                    TomatoRunIcon = ConstInfo.ClockStopIcon;
                 else
-                {
-                    var item = OnGoingToDoList.FindFirst(u => u.Id == info.Id);
-                    OnGoingToDoList.Remove(item);
-                }
-            }, cancel =>
-            {
+                    TomatoRunIcon = ConstInfo.ClockStartIcon;
+            }
+        }
 
-            });
-            IsDialogOpen = false;
+        /// <summary>
+        ///   //闹钟工作中。包含休息和工作中
+        /// </summary>
+        public bool IsTomatoWorking
+        {
+            get { return _isTomatoWorking; }
+            set
+            {
+                SetProperty(ref _isTomatoWorking, value);
+            }
+        }
+
+        public ObservableCollection<ToDoInfo> OnGoingToDoList
+        {
+            get { return _onGoingToDoList; }
+            set { SetProperty(ref _onGoingToDoList, value); }
+        }
+
+        public DelegateCommand<ToDoInfo> SetCurrentTodoCommand { get; private set; }
+
+        public int StatisticsInfoCount
+        {
+            get { return _statisticsInfoCount; }
+            set { SetProperty(ref _statisticsInfoCount, value); }
+        }
+
+        public ObservableCollection<StatisticsInfo> StatisticsInfos
+        {
+            get { return _statisticsInfos; }
+            set { SetProperty(ref _statisticsInfos, value); }
+        }
+
+        public ObservableCollection<ToDoInfo> SuccessToDoList
+        {
+            get { return _successToDoList; }
+            set { SetProperty(ref _successToDoList, value); }
+        }
+
+        public StatisticsInfo TodayFocus
+        {
+            get { return _todayFocus; }
+            set { SetProperty(ref _todayFocus, value); }
+        }
+
+        public StatisticsInfo TodayGoal
+        {
+            get { return _todayGoal; }
+            set { SetProperty(ref _todayGoal, value); }
+        }
+
+        public StatisticsInfo TodayOnGoing
+        {
+            get { return _todayOnGoing; }
+            set { SetProperty(ref _todayOnGoing, value); }
+        }
+
+        public StatisticsInfo TodayOverdue
+        {
+            get { return _todayOverdue; }
+            set { SetProperty(ref _todayOverdue, value); }
+        }
+
+        public StatisticsInfo TodaySuccess
+        {
+            get { return _todaySuccess; }
+            set { SetProperty(ref _todaySuccess, value); }
+        }
+
+        //
+        public DelegateCommand<ToDoInfo> TodoDeleteCommand { get; private set; }
+
+        /// <summary>
+        /// 新增或者删除的类
+        /// </summary>
+        public ToDoInfo TodoInfo
+        {
+            get { return _todoInfo; }
+            set { SetProperty(ref _todoInfo, value); }
+        }
+        public DelegateCommand<ToDoInfo> TodoStatusChangeCommand { get; private set; }
+        public DelegateCommand<ToDoInfo> TodoUpdateCommand { get; private set; }
+        public DelegateCommand TomatoExcuteCommand { get; private set; }
+
+        public DelegateCommand TomatoResetCommand { get; private set; }
+
+        public string TomatoRunIcon
+        {
+            get { return _tomatoRunIcon; }
+            set
+            {
+                SetProperty(ref _tomatoRunIcon, value);
+            }
+        }
+
+        #endregion Properties
+
+        #region Private Methods
+
+        //定时同步任务
+        private async void _bkDataSyncTimer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
+        {
+            if (DateTime.Now.Date != _nowDate)
+            {
+                //重置
+                InitData().GetAwaiter().GetResult();
+            }
+
+            if (CurrentTodo != null)
+            {
+                if (IsTomatoWorking && IsTomatoStart)
+                    //设置当前有效时间++
+                    CurrentTodo.CompleteMin++;
+            }
+            //数据的存储
+            //最新的专注时长更新
+
+            if (OnGoingToDoList.Count > 0)
+                await _resposityManager.UpdateAsync<ToDoInfo>(OnGoingToDoList.ToList());
+            if (SuccessToDoList.Count > 0)
+                await _resposityManager.UpdateAsync<ToDoInfo>(SuccessToDoList.ToList());
 
             StatictistInfo();
         }
 
-        private async void TodoStatusChange(ToDoInfo info)
+        private void AddClick()
         {
-            if (info == null)
-                return;
-            if (info.Id > 0)
-                await _resposityManager.UpdateAsync(info);
-            if (!info.IsComplete)
-            {
-                //原本是成功的
-                var item = SuccessToDoList.FindFirst(u => u.Id == info.Id);
-                SuccessToDoList.Remove(item);
-                //往失败里面加
-                OnGoingToDoList.Add(item);
-            }
-            else
-            {
-                //原本是进行中
-                var item = OnGoingToDoList.FindFirst(u => u.Id == info.Id);
-                OnGoingToDoList.Remove(item);
-                //往失败里面加
-                SuccessToDoList.Add(item);
-
-                //如果设置的是当前状态，那么重置
-                if (CurrentTodo != null && CurrentTodo.Id == info.Id)
-                {
-                    //重置
-                    InitClockTime();
-                    CurrentTodo = null;
-                }
-
-            }
-            StatictistInfo();
+            IsRightShow = true;
+            TodoInfo = new ToDoInfo();
         }
 
         private async void AddOrEditSubmit()
@@ -341,16 +332,13 @@ namespace ToDoList.ViewModels
             {
                 IsDialogOpen = true;
 
-
-
                 return;
             }
-
 
             //对象处理，默认时间
             if (TodoInfo.Id <= 0)
             {
-              var id=  await _resposityManager.AddAsync(TodoInfo);
+                var id = await _resposityManager.AddAsync(TodoInfo);
                 TodoInfo.Id = id;
                 //新增todo list
                 OnGoingToDoList.Add(TodoInfo);
@@ -387,10 +375,73 @@ namespace ToDoList.ViewModels
             StatictistInfo();
         }
 
-        private void AddClick()
+        private string FomartClockTime()
         {
-            IsRightShow = true;
-            TodoInfo = new ToDoInfo();
+            return ((int)(ClockSecond / 60)).ToString().PadLeft(2, '0') + ":" + (ClockSecond % 60).ToString().PadLeft(2, '0');
+        }
+
+        private int GetTomatoClockTotalSecond()
+        {
+            return IsTomatoWorking ? ConstInfo.TomatoClockSuccess : ConstInfo.TomateClockTest;
+        }
+
+        /// <summary>
+        /// 初始化闹钟样子
+        /// </summary>
+        private void InitClockTime()
+        {
+            SetTimerStatus(false);
+            //初始化时间
+            IsTomatoWorking = true;
+
+            ClockSecond = GetTomatoClockTotalSecond();
+        }
+
+        private async Task InitData()
+        {
+            TodoInfo = null;
+            CurrentTodo = null;
+            _statisticsInfos = new ObservableCollection<StatisticsInfo>();
+            OnGoingToDoList = new ObservableCollection<ToDoInfo>();
+            SuccessToDoList = new ObservableCollection<ToDoInfo>();
+            await LoadStatisInfoData();
+            await LoadInitTodoList();
+            //初始化统计
+            StatictistInfo();
+            timer = new System.Timers.Timer();
+            timer.Interval = 1000;
+            //  timer.SynchronizingObject = this;
+
+            timer.Elapsed += Timer_Elapsed;
+            InitClockTime();
+
+            //开启后台同步任务
+            _bkDataSyncTimer = new System.Timers.Timer() { Interval = ConstInfo.DataSyncTimeSecond };
+            _bkDataSyncTimer.Elapsed += _bkDataSyncTimer_Elapsed;
+            _bkDataSyncTimer.Interval = 1000 * 60;
+            _bkDataSyncTimer.Start();
+        }
+
+        private async Task LoadInitTodoList()
+        {
+            //加载任务列表
+            var list = await _resposityManager.AsQueryable<ToDoInfo>().Where(u => u.StartTime >= DateTime.Now.Date && u.StartTime < DateTime.Now.Date.AddDays(1))
+            .ToListAsync();
+
+            foreach (var item in list)
+            {
+                item.StartHour = item.StartTime.ToString("HH:mm");
+                item.EndHour = item.EndTime.ToString("HH:mm");
+
+                if (item.IsComplete)
+                {
+                    SuccessToDoList.Add(item);
+                }
+                else
+                {
+                    OnGoingToDoList.Add(item);
+                }
+            }
         }
 
         /// <summary>
@@ -421,158 +472,19 @@ namespace ToDoList.ViewModels
             StatisticsInfoCount = _statisticsInfos.Count;
         }
 
-        private async Task LoadInitTodoList()
+        private void SetCurrentTodo(ToDoInfo info)
         {
-            //加载任务列表
-            var list = await _resposityManager.AsQueryable<ToDoInfo>().Where(u => u.StartTime >= DateTime.Now.Date && u.StartTime < DateTime.Now.Date.AddDays(1))
-            .ToListAsync();
-
-            foreach (var item in list)
+            IsDialogOpen = true;
+            //设置当前todo 为当前
+            //会清空当前闹钟，有一个确定按钮
+            DialogHelper.Open(_dialogService, Common.ConstInfo.DialogTipPage, "确定设置为当前任务吗", "确定设置为当前任务吗", u =>
             {
-                item.StartHour = item.StartTime.ToString("HH:mm");
-                item.EndHour = item.EndTime.ToString("HH:mm");
-
-                if (item.IsComplete)
-                {
-                    SuccessToDoList.Add(item);
-                }
-                else
-                {
-                    OnGoingToDoList.Add(item);
-                }
-            }
-        }
-
-
-
-
-        private async Task InitData()
-        {
-            TodoInfo = null;
-            CurrentTodo = null;
-            _statisticsInfos = new ObservableCollection<StatisticsInfo>();
-            OnGoingToDoList = new ObservableCollection<ToDoInfo>();
-            SuccessToDoList = new ObservableCollection<ToDoInfo>();
-            await LoadStatisInfoData();
-            await LoadInitTodoList();
-            //初始化统计
-            StatictistInfo();
-            timer = new System.Timers.Timer();
-            timer.Interval = 1000;
-            //  timer.SynchronizingObject = this;
-
-            timer.Elapsed += Timer_Elapsed;
-            InitClockTime();
-
-            //开启后台同步任务
-            _bkDataSyncTimer = new System.Timers.Timer() { Interval = ConstInfo.DataSyncTimeSecond };
-            _bkDataSyncTimer.Elapsed += _bkDataSyncTimer_Elapsed;
-            _bkDataSyncTimer.Interval = 1000 * 60;
-            _bkDataSyncTimer.Start();
-        }
-
-
-
-        private readonly IDialogService _dialogService;
-
-        #region 番茄闹钟逻辑
-
-
-        //tomato 图标
-        private string _tomatoRunIcon;
-        public string TomatoRunIcon
-        {
-            get { return _tomatoRunIcon; }
-            set
-            {
-                SetProperty(ref _tomatoRunIcon, value);
-            }
-        }
-        public DelegateCommand TomatoExcuteCommand { get; private set; }
-        public DelegateCommand TomatoResetCommand { get; private set; }
-
-
-
-        /// <summary>
-        /// 是否运行 。有两种状态。 运行和休息
-        /// </summary>
-        private bool _isTomatoStart;
-        /// <summary>
-        /// 是否运行 。有两种状态。 运行中，和不运行中
-        /// </summary>
-        public bool IsTomatoStart
-        {
-            get { return _isTomatoStart; }
-            set
-            {
-                SetProperty(ref _isTomatoStart, value);
-                if (value)
-                    TomatoRunIcon = ConstInfo.ClockStopIcon;
-                else
-                    TomatoRunIcon = ConstInfo.ClockStartIcon;
-            }
-        }
-
-
-
-
-        private bool _isTomatoWorking;
-        /// <summary>
-        ///   //闹钟工作中。包含休息和工作中
-        /// </summary>
-        public bool IsTomatoWorking
-        {
-            get { return _isTomatoWorking; }
-            set
-            {
-
-                SetProperty(ref _isTomatoWorking, value);
-
-            }
-        }
-
-        private string FomartClockTime()
-        {
-            return ((int)(ClockSecond / 60)).ToString().PadLeft(2, '0') + ":" + (ClockSecond % 60).ToString().PadLeft(2, '0');
-        }
-
-        private void Timer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
-        {
-            ClockSecond--;
-            Task.Delay(TimeSpan.FromSeconds(5)).GetAwaiter().GetResult();
-
-
-            ///成功设置停止
-            if (ClockSecond <= 0)
-            {
-                if (IsTomatoWorking)
-                {
-                    //记录当前时间的番茄闹钟数
-                    CurrentTodo.TomatoCount += 1;
-                   
-                }
-                //设置运行状态为停止
-                SetTimerStatus(false);
-                //跟进工作状态设置想应的时长
-                IsTomatoWorking = !IsTomatoWorking;
-                ClockSecond = GetTomatoClockTotalSecond();
-                StatictistInfo();
-                //跨窗体线程不能直接执行，需要这种写法
-                App.Current.Dispatcher.Invoke(new Action(delegate
-                {
-                    //设置窗体最大化
-                    App.Current.MainWindow.WindowState = System.Windows.WindowState.Maximized;
-                    //设置窗口置顶
-                    App.Current.MainWindow.Topmost = true;
-
-                }));
-            }
-            // 修改当前的
-        }
-
-        private int GetTomatoClockTotalSecond()
-        {
-            return IsTomatoWorking ? ConstInfo.TomatoClockSuccess : ConstInfo.TomateClockTest;
+                //初始化闹钟状态
+                InitClockTime();
+                //设置当前任务
+                CurrentTodo = info;
+            }, cancel: u => { });
+            IsDialogOpen = false;
         }
 
         private void SetTimerStatus(bool isStart)
@@ -583,69 +495,6 @@ namespace ToDoList.ViewModels
                 timer.Stop();
             IsTomatoStart = isStart;
         }
-
-        //重置
-        private void TomatoReset()
-        {
-            if (CurrentTodo == null)
-                return;
-
-            //重新赋值
-            //设置相反的
-            IsTomatoWorking = !IsTomatoWorking;
-            ClockSecond = GetTomatoClockTotalSecond();
-            SetTimerStatus(false);
-            StatictistInfo();
-        }
-        /// <summary>
-        /// 初始化闹钟样子
-        /// </summary>
-        private void InitClockTime()
-        {
-            SetTimerStatus(false);
-            //初始化时间
-            IsTomatoWorking = true;
-
-            ClockSecond = GetTomatoClockTotalSecond();
-        }
-        //开启或者暂停
-        private void TomatoExcute()
-        {
-            if (CurrentTodo == null)
-                return;
-            //开启
-            SetTimerStatus(!IsTomatoStart);
-        }
-        #endregion
-
-        #region 定时同步任务
-
-        //定时同步任务
-        private async void _bkDataSyncTimer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
-        {
-            if (DateTime.Now.Date != _nowDate)
-            {
-                //重置
-                InitData().GetAwaiter().GetResult();
-            }
-
-            if (CurrentTodo != null)
-            {
-                if (IsTomatoWorking && IsTomatoStart)
-                    //设置当前有效时间++
-                    CurrentTodo.CompleteMin++;
-            }
-            //数据的存储
-            //最新的专注时长更新
-
-            if (OnGoingToDoList.Count > 0)
-                await _resposityManager.UpdateAsync<ToDoInfo>(OnGoingToDoList.ToList());
-            if (SuccessToDoList.Count > 0)
-                await _resposityManager.UpdateAsync<ToDoInfo>(SuccessToDoList.ToList());
-
-            StatictistInfo();
-        }
-
 
         private void StatictistInfo()
         {
@@ -663,7 +512,7 @@ namespace ToDoList.ViewModels
             int ongoing = OnGoingToDoList.Count;
 
             /*
-             
+
                    _statisticsInfos = new ObservableCollection<StatisticsInfo>();
             _statisticsInfos.Add(new StatisticsInfo() { BgColor = "#F08080", Key = Common.ConstInfo.ToadyFocusKey, Title = "今日专注时长", Icon = "ImageFilterCenterFocus", Val = 0, Description = "分钟" });
             _statisticsInfos.Add(new StatisticsInfo() { BgColor = "#2EB7FC", Key = Common.ConstInfo.ToadyGoalKey, Title = "今日目标", Icon = "Basketball", Val = 0, Description = "" });
@@ -671,7 +520,7 @@ namespace ToDoList.ViewModels
             _statisticsInfos.Add(new StatisticsInfo() { BgColor = "#DC143C", Key = Common.ConstInfo.ToadyOverdueKey, Title = "今日逾期", Icon = "RobotVacuumAlert", Val = 0, Description = "" });
             _statisticsInfos.Add(new StatisticsInfo() { BgColor = "#DAA520", Key = Common.ConstInfo.ToadyOnGoingKey, Title = "今日进行中", Icon = "AirplaneTakeoff", Val = 0, Description = "" });
             StatisticsInfoCount = _statisticsInfos.Count;
-             
+
              */
             _statisticsInfos.FindFirst(u => u.Key == Common.ConstInfo.ToadyFocusKey).Val = totalFocus;
             _statisticsInfos.FindFirst(u => u.Key == Common.ConstInfo.ToadyTomatoKey).Val = totalTomato;
@@ -681,6 +530,133 @@ namespace ToDoList.ViewModels
             _statisticsInfos.FindFirst(u => u.Key == Common.ConstInfo.ToadyOverdueKey).Val = overdueCount;
             _statisticsInfos.FindFirst(u => u.Key == Common.ConstInfo.ToadyOnGoingKey).Val = ongoing;
         }
-        #endregion
+
+        private void Timer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
+        {
+            ClockSecond--;
+            Task.Delay(TimeSpan.FromSeconds(5)).GetAwaiter().GetResult();
+
+            ///成功设置停止
+            if (ClockSecond <= 0)
+            {
+                if (IsTomatoWorking)
+                {
+                    //记录当前时间的番茄闹钟数
+                    CurrentTodo.TomatoCount += 1;
+                }
+                //设置运行状态为停止
+                SetTimerStatus(false);
+                //跟进工作状态设置想应的时长
+                IsTomatoWorking = !IsTomatoWorking;
+                ClockSecond = GetTomatoClockTotalSecond();
+                StatictistInfo();
+                //跨窗体线程不能直接执行，需要这种写法
+                App.Current.Dispatcher.Invoke(new Action(delegate
+                {
+                    //设置窗体最大化
+                    App.Current.MainWindow.WindowState = System.Windows.WindowState.Maximized;
+                    //设置窗口置顶
+                    App.Current.MainWindow.Topmost = true;
+                }));
+            }
+            // 修改当前的
+        }
+
+        private void TodoDeleteSubmit(ToDoInfo info)
+        {
+            IsDialogOpen = true;
+            if (info == null)
+                return;
+            var pa = new DialogParameters();
+            pa.Add("Title", "删除计划清单");
+            pa.Add("Content", $"确定删除该计划清单嘛:{info.Title}。");
+            _dialogService.Open(ConstInfo.DialogTipPage, pa, async success =>
+            {
+                //执行成功操作
+                await _resposityManager.DeleteAsync(info);
+                //已出队列
+                if (info.IsComplete)
+                {
+                    var item = SuccessToDoList.FindFirst(u => u.Id == info.Id);
+                    SuccessToDoList.Remove(item);
+                }
+                else
+                {
+                    var item = OnGoingToDoList.FindFirst(u => u.Id == info.Id);
+                    OnGoingToDoList.Remove(item);
+                }
+            }, cancel =>
+            {
+            });
+            IsDialogOpen = false;
+
+            StatictistInfo();
+        }
+
+        private async void TodoStatusChange(ToDoInfo info)
+        {
+            if (info == null)
+                return;
+            if (info.Id > 0)
+                await _resposityManager.UpdateAsync(info);
+            if (!info.IsComplete)
+            {
+                //原本是成功的
+                var item = SuccessToDoList.FindFirst(u => u.Id == info.Id);
+                SuccessToDoList.Remove(item);
+                //往失败里面加
+                OnGoingToDoList.Add(item);
+            }
+            else
+            {
+                //原本是进行中
+                var item = OnGoingToDoList.FindFirst(u => u.Id == info.Id);
+                OnGoingToDoList.Remove(item);
+                //往失败里面加
+                SuccessToDoList.Add(item);
+
+                //如果设置的是当前状态，那么重置
+                if (CurrentTodo != null && CurrentTodo.Id == info.Id)
+                {
+                    //重置
+                    InitClockTime();
+                    CurrentTodo = null;
+                }
+            }
+            StatictistInfo();
+        }
+
+        private void TodoUpdateSubmit(ToDoInfo info)
+        {
+            if (info == null)
+                return;
+            TodoInfo = info.CopyTo<ToDoInfo>();
+            IsRightShow = true;
+            StatictistInfo();
+        }
+        //开启或者暂停
+        private void TomatoExcute()
+        {
+            if (CurrentTodo == null)
+                return;
+            //开启
+            SetTimerStatus(!IsTomatoStart);
+        }
+
+        //重置
+        private void TomatoReset()
+        {
+            if (CurrentTodo == null)
+                return;
+
+            //重新赋值
+            //设置相反的
+            IsTomatoWorking = !IsTomatoWorking;
+            ClockSecond = GetTomatoClockTotalSecond();
+            SetTimerStatus(false);
+            StatictistInfo();
+        }
+
+        #endregion Private Methods
     }
 }
