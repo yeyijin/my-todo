@@ -65,7 +65,7 @@
                     <StackPanel>
                         <DockPanel Grid.Row="0" Margin="10" LastChildFill="False">
                             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Horizontal">
-                                <TextBlock  FontSize="15" VerticalAlignment="Center" >当前任务:</TextBlock>
+                                <TextBlock  FontSize="20" VerticalAlignment="Center" Foreground="White" FontFamily="Jokerman">当前任务:</TextBlock>
                                 <TextBlock Text="{Binding CurrentTodo.Title}" FontWeight="Black" Foreground="DarkCyan" FontStyle="Normal" FontSize="30"></TextBlock>
                             </StackPanel>
                             <Button DockPanel.Dock="Right"
@@ -86,14 +86,20 @@
 
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Border Background="{Binding BgColor}" Margin="20" CornerRadius="5">
+                                    <Border   Margin="20" CornerRadius="35">
+                                        <Border.Background>
+                                            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                                <GradientStop Color="#FFC042F2"/>
+                                                <GradientStop Color="#FF35A0F2" Offset="1"/>
+                                            </LinearGradientBrush>
+                                        </Border.Background>
                                         <Border.Effect>
-                                            <DropShadowEffect Color="#dddddd" BlurRadius="1"></DropShadowEffect>
+                                            <DropShadowEffect Color="#FF558FE6" BlurRadius="1" Opacity="0.5"></DropShadowEffect>
                                         </Border.Effect>
                                         <StackPanel>
-                                            <materialDesign:PackIcon Kind="{Binding Icon}" Margin="10" FontSize="20" />
-                                            <TextBlock Text="{Binding Title}" Margin="10" FontSize="20"></TextBlock>
-                                            <TextBlock Text="{Binding Val}" Margin="10" FontSize="30"></TextBlock>
+                                            <materialDesign:PackIcon Kind="{Binding Icon}" Margin="10" FontSize="20" Foreground="#FFEDE7E7" />
+                                            <TextBlock Text="{Binding Title}" Margin="10" FontSize="20" Foreground="White" FontFamily="Snap ITC" FontWeight="Bold"></TextBlock>
+                                            <TextBlock Text="{Binding Val}" Margin="10" FontSize="30" Foreground="White"  FontFamily="Snap ITC" FontWeight="Bold"></TextBlock>
                                         </StackPanel>
                                     </Border>
                                 </DataTemplate>
@@ -104,7 +110,13 @@
 
                     <!---中间计时器-->
                     <StackPanel Grid.Row="1">
-                        <Border VerticalAlignment="Center" HorizontalAlignment="Center" Background="#8B658B" CornerRadius="10">
+                        <Border VerticalAlignment="Center" HorizontalAlignment="Center" CornerRadius="10">
+                            <Border.Background>
+                                <LinearGradientBrush EndPoint="0.2,1" StartPoint="0.2,0" ColorInterpolationMode="SRgbLinearInterpolation">
+                                    <GradientStop Color="#FF3160C8" />
+                                    <GradientStop Color="#FFC93BDD" Offset="1.2"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
                             <StackPanel>
 
                                 <TextBlock FontSize="100" Text="{Binding ClockTime}" Foreground="Beige">
@@ -129,7 +141,6 @@
                             </StackPanel>
                         </Border>
                     </StackPanel>
-
                     <Grid Grid.Row="2" Margin="20">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition></ColumnDefinition>
@@ -137,77 +148,96 @@
                         </Grid.ColumnDefinitions>
 
                         <!---列表-->
-                        <Grid Margin="10,0,10,0">
-                            <ListBox x:Name="OnGoingToDo"
+                        <Grid Margin="10,0,10,0" >
+                            <Border CornerRadius="15">
+                                <Border.Background>
+                                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                        <GradientStop Color="#FF5955E2"/>
+                                        <GradientStop Color="#FF6C22AC" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </Border.Background>
+                                <ListBox x:Name="OnGoingToDo"
                            ScrollViewer.VerticalScrollBarVisibility="Hidden"
                              HorizontalContentAlignment="Stretch"
                         ItemsSource="{Binding OnGoingToDoList}">
-                                <ListBox.ItemTemplate>
-                                    <DataTemplate>
-                                        <DockPanel LastChildFill="False">
-                                            <StackPanel Orientation="Horizontal"  DockPanel.Dock="Right" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                                <TextBlock Text="{Binding StartHour}" Margin="0,0,50,0" FontSize="15" Foreground="#00008B" Opacity="0.5"></TextBlock>
-                                                <TextBlock Text="-" Margin="-40,0,50,0" FontSize="15" Foreground="#00008B" Opacity="0.5"></TextBlock>
-                                                <TextBlock Text="{Binding EndHour}" Margin="-40,0,50,0" FontSize="15" Foreground="#00008B" Opacity="0.5"></TextBlock>
-                                                <ToggleButton  IsChecked="{Binding IsComplete}" Command="{Binding Path=DataContext.TodoStatusChangeCommand,RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=ListBox}}"
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border CornerRadius="15">
+                                                <DockPanel LastChildFill="False">
+                                                    <StackPanel Orientation="Horizontal"  DockPanel.Dock="Right" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                        <TextBlock Text="{Binding StartHour}" Margin="0,0,50,0" FontSize="20" Foreground="White" Opacity="0.5"></TextBlock>
+                                                        <TextBlock Text="-" Margin="-40,0,50,0" FontSize="15" Foreground="White" Opacity="0.5"></TextBlock>
+                                                        <TextBlock Text="{Binding EndHour}" Margin="-40,0,50,0" FontSize="20" Foreground="White" Opacity="0.5"></TextBlock>
+                                                        <ToggleButton  IsChecked="{Binding IsComplete}" Command="{Binding Path=DataContext.TodoStatusChangeCommand,RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=ListBox}}"
    CommandParameter="{Binding RelativeSource={x:Static RelativeSource.Self},Path=DataContext}">
-                                                </ToggleButton>
-                                                <materialDesign:PopupBox Margin="0,-40,0,0"  Panel.ZIndex="1">
-                                                    <StackPanel>
-                                                        <Button Content="设置为当前任务"  Command="{Binding Path=DataContext.SetCurrentTodoCommand,RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=ListBox}}"
+                                                        </ToggleButton>
+                                                        <materialDesign:PopupBox Margin="0,-40,0,0"  Panel.ZIndex="1">
+                                                            <Border CornerRadius="15">
+                                                                <StackPanel>
+                                                                    <Button Content="设置为当前任务"  Command="{Binding Path=DataContext.SetCurrentTodoCommand,RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=ListBox}}"
    CommandParameter="{Binding RelativeSource={x:Static RelativeSource.Self},Path=DataContext}"></Button>
-                                                        <Button Content="编辑"  Command="{Binding Path=DataContext.TodoUpdateCommand,RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=ListBox}}"
+                                                                    <Button Content="编辑"  Command="{Binding Path=DataContext.TodoUpdateCommand,RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=ListBox}}"
    CommandParameter="{Binding RelativeSource={x:Static RelativeSource.Self},Path=DataContext}"></Button>
-                                                        <Button Content="删除"  Command="{Binding Path=DataContext.TodoDeleteCommand,RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=ListBox}}"
+                                                                    <Button Content="删除"  Command="{Binding Path=DataContext.TodoDeleteCommand,RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=ListBox}}"
    CommandParameter="{Binding RelativeSource={x:Static RelativeSource.Self},Path=DataContext}"></Button>
+                                                                </StackPanel>
+                                                            </Border>
+                                                        </materialDesign:PopupBox>
                                                     </StackPanel>
-                                                </materialDesign:PopupBox>
-                                            </StackPanel>
-
-                                            <StackPanel Orientation="Vertical">
-                                                <TextBlock Text="{Binding Title}" Margin="1" FontSize="15" ></TextBlock>
-                                                <TextBlock Text="{Binding Description}"  Margin="10" FontSize="10" Opacity="0.5"  ></TextBlock>
-                                            </StackPanel>
-                                        </DockPanel>
-                                    </DataTemplate>
-                                </ListBox.ItemTemplate>
-                            </ListBox>
+                                                    <StackPanel Orientation="Vertical">
+                                                        <TextBlock Text="{Binding Title}" Margin="1" FontSize="20" Foreground="White" ></TextBlock>
+                                                        <TextBlock Text="{Binding Description}"  Margin="10" FontSize="10" Foreground="White" Opacity="0.5"  ></TextBlock>
+                                                    </StackPanel>
+                                                </DockPanel>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                            </Border>
                         </Grid>
-
                         <Grid  Grid.Column="1" Margin="10,0,10,0">
-                            <ListBox x:Name="CompleteToDo"
+                            <Border CornerRadius="15">
+                                <Border.Background>
+                                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                        <GradientStop Color="#FF5955E2"/>
+                                        <GradientStop Color="#FF6C22AC" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </Border.Background>
+                                <ListBox x:Name="CompleteToDo"
                            ScrollViewer.VerticalScrollBarVisibility="Hidden"
                              HorizontalContentAlignment="Stretch"
                         ItemsSource="{Binding SuccessToDoList}">
-                                <ListBox.ItemTemplate>
-                                    <DataTemplate>
-                                        <DockPanel LastChildFill="False">
-                                            <StackPanel Orientation="Horizontal"  DockPanel.Dock="Right" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                                <TextBlock Text="{Binding StartHour}" Margin="0,0,50,0" FontSize="15" Foreground="#00008B" Opacity="0.5"></TextBlock>
-                                                <TextBlock Text="-" Margin="-40,0,50,0" FontSize="15" Foreground="#00008B" Opacity="0.5"></TextBlock>
-                                                <TextBlock Text="{Binding EndHour}" Margin="-40,0,50,0" FontSize="15" Foreground="#00008B" Opacity="0.5"></TextBlock>
-                                                <ToggleButton IsChecked="{Binding IsComplete}"   Command="{Binding Path=DataContext.TodoStatusChangeCommand,RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=ListBox}}"
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <DockPanel LastChildFill="False">
+                                                <StackPanel Orientation="Horizontal"  DockPanel.Dock="Right" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                    <TextBlock Text="{Binding StartHour}" Margin="0,0,50,0" FontSize="20" Foreground="White" Opacity="0.5" ></TextBlock>
+                                                    <TextBlock Text="-" Margin="-40,0,50,0" FontSize="20" Foreground="White" Opacity="0.5" ></TextBlock>
+                                                    <TextBlock Text="{Binding EndHour}" Margin="-40,0,50,0" FontSize="20" Foreground="White" Opacity="0.5" ></TextBlock>
+                                                    <ToggleButton IsChecked="{Binding IsComplete}"   Command="{Binding Path=DataContext.TodoStatusChangeCommand,RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=ListBox}}"
    CommandParameter="{Binding RelativeSource={x:Static RelativeSource.Self},Path=DataContext}">
-                                                </ToggleButton>
-                                                <materialDesign:PopupBox Margin="0,-40,0,0"  Panel.ZIndex="1">
-                                                    <StackPanel>
-                                                        <Button Content="删除"  Command="{Binding Path=DataContext.TodoDeleteCommand,RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=ListBox}}"
+                                                    </ToggleButton>
+                                                    <materialDesign:PopupBox Margin="0,-40,0,0"  Panel.ZIndex="1">
+                                                        <StackPanel>
+                                                            <Button Content="删除"  Command="{Binding Path=DataContext.TodoDeleteCommand,RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=ListBox}}"
    CommandParameter="{Binding RelativeSource={x:Static RelativeSource.Self},Path=DataContext}"></Button>
-                                                        <Button Content="编辑"  Command="{Binding Path=DataContext.TodoUpdateCommand,RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=ListBox}}"
+                                                            <Button Content="编辑"  Command="{Binding Path=DataContext.TodoUpdateCommand,RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=ListBox}}"
    CommandParameter="{Binding RelativeSource={x:Static RelativeSource.Self},Path=DataContext}"></Button>
-                                                    </StackPanel>
-                                                </materialDesign:PopupBox>
-                                            </StackPanel>
+                                                        </StackPanel>
+                                                    </materialDesign:PopupBox>
+                                                </StackPanel>
 
-                                            <StackPanel Orientation="Vertical">
-                                                <TextBlock Text="{Binding Title}" Margin="1" FontSize="15" ></TextBlock>
-                                                <TextBlock Text="{Binding Description}"  Margin="10" FontSize="10" Opacity="0.5"  ></TextBlock>
-                                            </StackPanel>
-                                        </DockPanel>
-                                    </DataTemplate>
-                                </ListBox.ItemTemplate>
-                            </ListBox>
+                                                <StackPanel Orientation="Vertical">
+                                                    <TextBlock Text="{Binding Title}" Margin="1" FontSize="20" Foreground="White" ></TextBlock>
+                                                    <TextBlock Text="{Binding Description}"  Margin="10"  Opacity="0.5"  FontSize="10" Foreground="White"  ></TextBlock>
+                                                </StackPanel>
+                                            </DockPanel>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                            </Border>
                         </Grid>
+
                     </Grid>
                 </Grid>
             </materialDesign:DialogHost>

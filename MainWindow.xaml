@@ -24,12 +24,12 @@
                              Identifier="RootDialog"
                              SnackbarMessageQueue="{Binding ElementName=MainSnackbar, Path=MessageQueue}">
         <Border CornerRadius="50" BorderThickness="1">
-        <Border.Background>
-            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                <GradientStop Color="#FF3E143E" Offset="0"/>
-                <GradientStop Color="#FF673AB7" Offset="0.3"/>
-            </LinearGradientBrush>
-        </Border.Background>
+            <Border.Background>
+                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                    <GradientStop Color="#FF3E143E" Offset="0"/>
+                    <GradientStop Color="#FF673AB7" Offset="0.3"/>
+                </LinearGradientBrush>
+            </Border.Background>
 
             <materialDesign:DrawerHost IsLeftDrawerOpen="{Binding ElementName=MenuToggleButton, Path=IsChecked}" BottomDrawerBackground="{x:Null}" LeftDrawerBackground="{x:Null}" OverlayBackground="#FF6639B3">
                 <materialDesign:DrawerHost.LeftDrawerContent>
@@ -84,10 +84,9 @@
                                   Mode="PrimaryMid"
                                       CornerRadius="30,30,0,0" Background="{x:Null}">
                         <DockPanel>
-
                             <StackPanel Orientation="Horizontal">
                                 <ToggleButton x:Name="MenuToggleButton"
-                            AutomationProperties.Name="HamburgerToggleButton"
+                                 AutomationProperties.Name="HamburgerToggleButton"
                             IsChecked="False"
                             Style="{StaticResource MaterialDesignHamburgerToggleButton}" />
 
@@ -95,8 +94,7 @@
                                 Name="GoBackBtn"
                                 Command="{Binding GoBackCommand}"
                       materialDesign:RippleAssist.Feedback="{Binding RelativeSource={RelativeSource Self}, Path=Foreground, Converter={StaticResource BrushRoundConverter}}"
-                      Content="{materialDesign:PackIcon Kind=ArrowLeft,
-                                                        Size=24}"
+                      Content="{materialDesign:PackIcon Kind=ArrowLeft, Size=24}"
                       Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}"
                       Style="{StaticResource MaterialDesignToolButton}"
                       ToolTip="Previous Item" />
@@ -137,7 +135,6 @@
 materialDesign:ButtonProgressAssist.IsIndicatorVisible="True"
 materialDesign:ButtonProgressAssist.Value="-1">x</Button>
                             </StackPanel>
-
                             <TextBlock Margin="140,0,0,0"
                        VerticalAlignment="Center"
                        AutomationProperties.Name="Material Design In XAML Toolkit"
