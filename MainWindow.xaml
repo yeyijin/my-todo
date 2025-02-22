@@ -19,7 +19,11 @@
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
          xmlns:prism="http://prismlibrary.com/"
         Title="MainWindow" Height="800" Width="1200">
-    <Border CornerRadius="50" BorderThickness="1">
+
+    <materialDesign:DialogHost DialogTheme="Inherit"
+                             Identifier="RootDialog"
+                             SnackbarMessageQueue="{Binding ElementName=MainSnackbar, Path=MessageQueue}">
+        <Border CornerRadius="50" BorderThickness="1">
         <Border.Background>
             <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                 <GradientStop Color="#FF3E143E" Offset="0"/>
@@ -27,73 +31,67 @@
             </LinearGradientBrush>
         </Border.Background>
 
-        <materialDesign:DrawerHost  IsLeftDrawerOpen="{Binding ElementName=MenuToggleButton, Path=IsChecked}" Name="HostMenu" BottomDrawerBackground="{x:Null}" Foreground="{x:Null}" LeftDrawerBackground="{x:Null}" RightDrawerBackground="{x:Null}" OverlayBackground="{x:Null}" TopDrawerBackground="{x:Null}">
-            <materialDesign:DrawerHost.BorderBrush>
-                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                    <GradientStop Color="Black"/>
-                    <GradientStop Color="#FF673AB7" Offset="1"/>
-                </LinearGradientBrush>
-            </materialDesign:DrawerHost.BorderBrush>
-            <!--左边弹出的内容-->
-            <materialDesign:DrawerHost.LeftDrawerContent>
-                <Border CornerRadius="30">
-                    <Border.Background>
-                        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                            <GradientStop Color="#FF2B2469"/>
-                            <GradientStop Color="#FF8F3CD8" Offset="1"/>
-                        </LinearGradientBrush>
-                    </Border.Background>
-                    <DockPanel MinWidth="220">
+            <materialDesign:DrawerHost IsLeftDrawerOpen="{Binding ElementName=MenuToggleButton, Path=IsChecked}" BottomDrawerBackground="{x:Null}" LeftDrawerBackground="{x:Null}" OverlayBackground="#FF6639B3">
+                <materialDesign:DrawerHost.LeftDrawerContent>
+                    <Border CornerRadius="30">
+                        <Border.Background>
+                            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                <GradientStop Color="#FF2B2469"/>
+                                <GradientStop Color="#FF8F3CD8" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Border.Background>
+                        <DockPanel MinWidth="220">
 
                             <ToggleButton Margin="16"
                         HorizontalAlignment="Right"
                         DockPanel.Dock="Top"
                         IsChecked="{Binding ElementName=MenuToggleButton, Path=IsChecked, Mode=TwoWay}"
                         Style="{StaticResource MaterialDesignHamburgerToggleButton}" />
-                               
-                                <ListBox x:Name="MenuItemsListBox"
+
+                            <ListBox x:Name="MenuItemsListBox"
                    Margin="0,16,0,16"
                    AutomationProperties.Name="DemoPagesListBox"
                    PreviewMouseLeftButtonUp="UIElement_OnPreviewMouseLeftButtonUp"
                    SelectedItem="{Binding SelectedItem}"
                    ItemsSource="{Binding MenuItemsList}"
                    Style="{StaticResource MaterialDesignNavigationPrimaryListBox}">
-                                    <ListBox.Resources>
-                                        <Style TargetType="ScrollBar" BasedOn="{StaticResource MaterialDesignScrollBarMinimal}" />
-                                    </ListBox.Resources>
-                                    <i:Interaction.Triggers>
-                                        <i:EventTrigger EventName="SelectionChanged">
-                                            <i:InvokeCommandAction Command="{Binding SelectMenuChangedCommand}" CommandParameter="{Binding ElementName=MenuItemsListBox,Path=SelectedItem}"></i:InvokeCommandAction>
-                                        </i:EventTrigger>
-                                    </i:Interaction.Triggers>
-                                    <ListBox.ItemTemplate>
-                                        <DataTemplate DataType="domain:DemoItem">
-                                            <StackPanel Orientation="Horizontal">
-                                                <materialDesign:PackIcon Kind="{Binding Icon}" Margin="10" />
-                                                <TextBlock Text="{Binding Title}" Margin="24,10,0,4"></TextBlock>
-                                            </StackPanel>
-                                        </DataTemplate>
-                                    </ListBox.ItemTemplate>
-                                </ListBox>
-                    </DockPanel>
-                </Border>
-            </materialDesign:DrawerHost.LeftDrawerContent >
+                                <ListBox.Resources>
+                                    <Style TargetType="ScrollBar" BasedOn="{StaticResource MaterialDesignScrollBarMinimal}" />
+                                </ListBox.Resources>
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="SelectionChanged">
+                                        <i:InvokeCommandAction Command="{Binding SelectMenuChangedCommand}" CommandParameter="{Binding ElementName=MenuItemsListBox,Path=SelectedItem}"></i:InvokeCommandAction>
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate DataType="domain:DemoItem">
+                                        <StackPanel Orientation="Horizontal">
+                                            <materialDesign:PackIcon Kind="{Binding Icon}" Margin="10" />
+                                            <TextBlock Text="{Binding Title}" Margin="24,10,0,4"></TextBlock>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </DockPanel>
+                    </Border>
+                </materialDesign:DrawerHost.LeftDrawerContent >
 
-            <DockPanel>
-                <materialDesign:ColorZone Padding="16"  x:Name="TopDock"
+
+                <DockPanel>
+                    <materialDesign:ColorZone Padding="16"  x:Name="TopDock"
                                   materialDesign:ElevationAssist.Elevation="Dp4"
                                   DockPanel.Dock="Top"
                                   Mode="PrimaryMid"
                                       CornerRadius="30,30,0,0" Background="{x:Null}">
-                    <DockPanel>
+                        <DockPanel>
 
-                        <StackPanel Orientation="Horizontal">
-                            <ToggleButton x:Name="MenuToggleButton"
+                            <StackPanel Orientation="Horizontal">
+                                <ToggleButton x:Name="MenuToggleButton"
                             AutomationProperties.Name="HamburgerToggleButton"
                             IsChecked="False"
                             Style="{StaticResource MaterialDesignHamburgerToggleButton}" />
 
-                            <Button Margin="24,0,0,0"
+                                <Button Margin="24,0,0,0"
                                 Name="GoBackBtn"
                                 Command="{Binding GoBackCommand}"
                       materialDesign:RippleAssist.Feedback="{Binding RelativeSource={RelativeSource Self}, Path=Foreground, Converter={StaticResource BrushRoundConverter}}"
@@ -103,7 +101,7 @@
                       Style="{StaticResource MaterialDesignToolButton}"
                       ToolTip="Previous Item" />
 
-                            <Button Margin="16,0,0,0"
+                                <Button Margin="16,0,0,0"
                                 Name="GoPre"
                                 Command="{Binding GoPreCommand}"
                       materialDesign:RippleAssist.Feedback="{Binding RelativeSource={RelativeSource Self}, Path=Foreground, Converter={StaticResource BrushRoundConverter}}"
@@ -113,7 +111,7 @@
                       Style="{StaticResource MaterialDesignToolButton}"
                       ToolTip="Next Item" />
 
-                            <Button Margin="16,0,0,0"
+                                <Button Margin="16,0,0,0"
                                 Name="GoHome"
                       materialDesign:RippleAssist.Feedback="{Binding RelativeSource={RelativeSource Self}, Path=Foreground, Converter={StaticResource BrushRoundConverter}}"
                       Command="{Binding GoHomeCommand}"
@@ -122,38 +120,42 @@
                       Foreground="{Binding RelativeSource={RelativeSource AncestorType={x:Type FrameworkElement}}, Path=(TextElement.Foreground)}"
                       Style="{StaticResource MaterialDesignToolButton}"
                       ToolTip="Home" />
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
-                            <Button FontSize="20" materialDesign:ButtonAssist.CornerRadius="10" Style="{StaticResource MaterialDesignRaisedDarkButton}"   materialDesign:ButtonProgressAssist.IsIndeterminate="True"
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
+                                <Button FontSize="20" materialDesign:ButtonAssist.CornerRadius="10" Style="{StaticResource MaterialDesignRaisedDarkButton}"   materialDesign:ButtonProgressAssist.IsIndeterminate="True"
   materialDesign:ButtonProgressAssist.IsIndicatorVisible="True"
   materialDesign:ButtonProgressAssist.Value="-1" Name="MinBtn" Background="#FF421748">-</Button>
-                            <Button FontSize="20" materialDesign:ButtonAssist.CornerRadius="10" Style="{StaticResource MaterialDesignRaisedDarkButton}" 
+                                <Button FontSize="20" materialDesign:ButtonAssist.CornerRadius="10" Style="{StaticResource MaterialDesignRaisedDarkButton}" 
                                     Name="MaxBtn" Background="#FF421748"
                                     materialDesign:ButtonProgressAssist.IsIndeterminate="True"
   materialDesign:ButtonProgressAssist.IsIndicatorVisible="True"
   materialDesign:ButtonProgressAssist.Value="-1"
                                     >+</Button>
-                            <Button FontSize="20" materialDesign:ButtonAssist.CornerRadius="10" Style="{StaticResource MaterialDesignRaisedDarkButton}"
+                                <Button FontSize="20" materialDesign:ButtonAssist.CornerRadius="10" Style="{StaticResource MaterialDesignRaisedDarkButton}"
                                     Name="CloseBtn" Background="#FF421748"
                                                                       materialDesign:ButtonProgressAssist.IsIndeterminate="True"
 materialDesign:ButtonProgressAssist.IsIndicatorVisible="True"
 materialDesign:ButtonProgressAssist.Value="-1">x</Button>
-                        </StackPanel>
+                            </StackPanel>
 
-                        <TextBlock Margin="140,0,0,0"
+                            <TextBlock Margin="140,0,0,0"
                        VerticalAlignment="Center"
                        AutomationProperties.Name="Material Design In XAML Toolkit"
                        FontSize="22"
                        Text="每日清单" />
-                        <!--右上角小点点-->
-                        <!--<materialDesign:PopupBox DockPanel.Dock="Right"
+                            <!--右上角小点点-->
+                            <!--<materialDesign:PopupBox DockPanel.Dock="Right"
                                      PlacementMode="BottomAndAlignRightEdges"
                                      StaysOpen="False">
             </materialDesign:PopupBox>-->
-                    </DockPanel>
-                </materialDesign:ColorZone>
-                <ContentControl    prism:RegionManager.RegionName="{x:Static ext:ConstInfo.MainControlRegion}" MouseLeftButtonDown="ContentControl_MouseLeftButtonDown" />
-            </DockPanel>
-        </materialDesign:DrawerHost>
-    </Border>
+                        </DockPanel>
+                    </materialDesign:ColorZone>
+                    <ContentControl    prism:RegionManager.RegionName="{x:Static ext:ConstInfo.MainControlRegion}" MouseLeftButtonDown="ContentControl_MouseLeftButtonDown" />
+                </DockPanel>
+
+            </materialDesign:DrawerHost>
+
+
+        </Border>
+    </materialDesign:DialogHost>
 </Window>
