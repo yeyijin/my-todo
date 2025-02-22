@@ -12,7 +12,5 @@
     <PackageReference Include="Prism.DryIoc" Version="8.1.97" />
     <PackageReference Include="SqlSugarCore" Version="5.1.4.128" />
   </ItemGroup>
-    <Folder Include="Service\" />
-
 
 </Project>
